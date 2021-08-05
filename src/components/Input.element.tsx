@@ -1,10 +1,7 @@
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Icon from '@material-ui/core/Icon';
-import AddIcon from '@material-ui/icons/Add';
-import CheckboxList from "./List";
-
+import AlertDialogSlide from "./Dialog";
+import {ITodo} from "../state/action-type";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -29,29 +26,18 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export const InputElement: React.FC = () => {
-  const classes = useStyles();
 
+export const InputElement: React.FC = () => {
+  const [open, setOpen] = React.useState(false);
+  const classes = useStyles();
+  const saveTodo = (todo: ITodo)=>{
+    console.log(todo)
+  }
   return (
     <div className={classes.root}>
-
-      {/*<TextField*/}
-      {/*  id="outlined-full-width"*/}
-      {/*  label="Add todo"*/}
-      {/*  style={ { margin: 8, width: '90%'  } }*/}
-      {/*  placeholder=" read book"*/}
-      {/*  helperText="Enter new todo for create"*/}
-      {/*  fullWidth*/}
-      {/*  margin="normal"*/}
-      {/*  InputLabelProps={ { shrink: true } }*/}
-      {/*  variant="outlined"*/}
-      {/*  />*/}
-      <AddIcon className={classes.iconPlus}  />
-
-
+      <AlertDialogSlide setData={saveTodo} />
     </div>
   )
-
 }
 
 export default InputElement

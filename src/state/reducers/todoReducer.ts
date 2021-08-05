@@ -1,9 +1,10 @@
 import { ActionType, ITodo, ITodoState, TAction } from '../action-type'
+import { v4 as uuIdv4 } from 'uuid';
 
 const initState: ITodoState = {
   dataTodo: [
     {
-      id: 0,
+      id: 0 ,
       header: 'Brunch this weekend?',
       author: 'Mark',
       body: 'I\'ll be in your neighborhood doing errands this…',
@@ -11,14 +12,14 @@ const initState: ITodoState = {
       completed: false,
     },
     {
-      id: Date.now(),
+      id: 1,
       header: 'Summer BBQ',
       author: 'Scott, Alex, Jennifer',
       body: 'Wish I could come, but I\'m out of town this…',
       selected: false,
       completed: true,
     },{
-      id: Date.now(),
+      id: 2,
       header: 'Oui Oui',
       author: 'Sandra Adams',
       body: 'Do you have Paris recommendations? Have you ever…',
@@ -46,11 +47,12 @@ export const reducerTodos = (
       let delTodo: ITodo[] = state.dataTodo.filter((el) => el.id !== id)
       return { ...state, dataTodo: delTodo }
     case ActionType.COMPLETED_TODO:
-      const compElId = action.payload //id
-      const compEl = { ...state.dataTodo[compElId], completed: !completed }
-      const compTodo: ITodo[] = state.dataTodo.splice(compElId, 1, compEl)
-      return { ...state, dataTodo: compTodo }
-
+      return { ...state,
+        dataTodo: state.dataTodo.map(todo => {
+          if (todo.id !== action.payload) { return todo }
+          return { ...todo,  completed: !todo.completed }
+        })
+      }
     default:
       return state
   }

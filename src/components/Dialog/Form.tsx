@@ -1,5 +1,4 @@
 import React from 'react';
-import clsx from 'clsx';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -31,7 +30,7 @@ interface State {
   author: string;
 }
 
-export default function InputAdornments() {
+const InputAdornments: React.FC = () => {
   const classes = useStyles();
   const [values, setValues] = React.useState<State>({
     amount: '',
@@ -44,46 +43,42 @@ export default function InputAdornments() {
     setValues({...values, [prop]: event.target.value});
   };
 
-  // const handleClickShowPassword = () => {
-  //   setValues({...values, showPassword: !values.showPassword});
-  // };
-  //
-  // const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   event.preventDefault();
-  // };
+
   return (
     <div className={classes.root}>
       <div>
         <FormControl fullWidth className={classes.margin} variant="outlined">
-          <InputLabel htmlFor="form-input__header">Amount</InputLabel>
+          <InputLabel htmlFor="form-input__header">Header</InputLabel>
           <OutlinedInput
             id="form-input__header"
             value={values.header}
             onChange={handleChange('header')}
-            startAdornment={<InputAdornment position="start">h</InputAdornment>}
+            startAdornment={<InputAdornment position="start">H</InputAdornment>}
             labelWidth={60}
           />
         </FormControl>
         <FormControl fullWidth className={classes.margin} variant="outlined">
-          <InputLabel htmlFor="form-input__author">Amount</InputLabel>
+          <InputLabel htmlFor="form-input__author">Author</InputLabel>
           <OutlinedInput
             id="form-input__author"
             value={values.author}
             onChange={handleChange('author')}
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            startAdornment={<InputAdornment position="start">A</InputAdornment>}
             labelWidth={60}
           />
         </FormControl>
         <FormControl fullWidth className={classes.margin} variant="outlined">
-          <InputLabel htmlFor="form-input__body">Amount</InputLabel>
+          <InputLabel htmlFor="form-input__body">Body</InputLabel>
           <OutlinedInput
             id="form-input__body"
             value={values.body}
             onChange={handleChange('body')}
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            startAdornment={<InputAdornment position="start">B</InputAdornment>}
             labelWidth={60}
           />
         </FormControl>
       </div>
     </div>)
 }
+
+export default InputAdornments
