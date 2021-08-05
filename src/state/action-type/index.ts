@@ -1,6 +1,7 @@
 export interface ITodo {
   id: number
   header: string | null
+  author: string | null
   body: string | null
   selected: boolean
   completed: boolean

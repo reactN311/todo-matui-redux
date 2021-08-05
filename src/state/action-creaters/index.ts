@@ -1,17 +1,17 @@
 import { ActionType, ITodo } from '../action-type'
 
-export const addTodoCreacter = (todo: ITodo) => {
+export const addTodoCreate = (todo: ITodo) => {
   return { type: ActionType.ADD_TODO, payload: todo }
 }
 
-export const editTodoCreacter = (todo: ITodo) => {
+export const editTodoCreate = (todo: ITodo) => {
   return { type: ActionType.EDIT_TODO, payload: todo }
 }
 
-export const delTodoCreacter = (id: number) => {
+export const delTodoCreate = (id: number) => {
   return { type: ActionType.DELETE_TODO, payload: id }
 }
 
-export const completedTodoCreacter = (id: number) => {
+export const completedTodoCreate = (id: number) => {
   return { type: ActionType.COMPLETED_TODO, payload: id }
 }

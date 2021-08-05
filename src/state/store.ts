@@ -1,29 +1,32 @@
-import { createStore, applyMiddleware, compose } from 'redux'
+import { createStore, applyMiddleware
+  // , compose
+} from 'redux'
 import ReduxThunk from 'redux-thunk'
-import logger from 'redux-logger'
-import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
 
 import reducers from './reducers'
+export const store = createStore(reducers, {}, applyMiddleware(ReduxThunk))
 
-const middlewares = [ReduxThunk]
+// import logger from 'redux-logger'
+// import { persistStore, persistReducer } from 'redux-persist'
+// import storage from 'redux-persist/lib/storage'
+// import reducerTodos from './reducers/todoReducer'
 
-if (process.env.NODE_ENV === 'development') {
-  // middlewares.push(logger);
-}
+// const middlewares = [ReduxThunk]
 
-const persistConfig = {
-  key: 'root',
-  storage,
-}
+// if (process.env.NODE_ENV === 'development') {
+//   // middlewares.push(logger);
+// }
 
-const persistedReducer = persistReducer(persistConfig, reducers)
+// const persistConfig = {
+//   key: 'root',
+//   storage,
+// }
 
-export const store = createStore(
-  persistedReducer,
-  compose(applyMiddleware(...middlewares)),
-)
+// const persistedReducer = persistReducer(persistConfig, reducers)
+
+// export const store = createStore(
+//   persistedReducer,
+//   compose(applyMiddleware(...middlewares)),
+// )
 
 // export const persistor = persistStore(store)
-
-// export const store = createStore(reducers, {}, applyMiddleware(thunk))
