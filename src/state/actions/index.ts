@@ -1,23 +1,46 @@
+import { Dispatch } from 'redux'
 import {
   addTodoCreacter,
   completedTodoCreacter,
   delTodoCreacter,
   editTodoCreacter,
 } from '../action-creaters'
-import { ITodo } from '../action-type'
+import { ActionType, ITodo } from '../action-type'
 
-const addTodo = (todo: ITodo) => {
-  return (dispatch: any) => dispatch(addTodoCreacter(todo))
+interface addTodoCreacterAction {
+  type: ActionType
+  payload: ITodo
+}
+interface editTodoCreacter {
+  type: ActionType
+  payload: ITodo
 }
 
-const editTodo = (todo: ITodo) => {
-  return (dispatch: any) => dispatch(editTodoCreacter(todo))
+interface delTodoCreacter {
+  type: ActionType
+  payload: number
+}
+interface completedTodoCreacter {
+  type: ActionType
+  payload: number
 }
 
-const delTodo = (id: number) => {
-  return (dispatch: any) => dispatch(delTodoCreacter(id))
+const addTodo = (todo: ITodo) => (
+  dispatch: Dispatch<addTodoCreacterAction>,
+) => {
+  dispatch(addTodoCreacter(todo))
 }
 
-const completedTodo = (id: number) => {
-  return (dispatch: any) => dispatch(completedTodoCreacter(id))
+const editTodo = (todo: ITodo) => (dispatch: Dispatch<editTodoCreacter>) => {
+  dispatch(editTodoCreacter(todo))
+}
+
+const delTodo = (id: number) => (dispatch: Dispatch<delTodoCreacter>) => {
+  dispatch(delTodoCreacter(id))
+}
+
+const completedTodo = (id: number) => (
+  dispatch: Dispatch<completedTodoCreacter>,
+) => {
+  dispatch(completedTodoCreacter(id))
 }

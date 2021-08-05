@@ -1,6 +1,25 @@
 import { ActionType, ITodo, ITodoState, TAction } from '../action-type'
 
-const reducer = (state: ITodoState, action: TAction) => {
+const initState: ITodoState = {
+  dataTodo: [
+    {
+      id: 0,
+      header: 'def header',
+      body: 'def body2',
+      selected: false,
+      completed: false,
+    },
+    {
+      id: Date.now(),
+      header: 'def header2',
+      body: 'def body2',
+      selected: false,
+      completed: true,
+    },
+  ],
+}
+
+const reducerTodos = (state: ITodoState = initState, action: TAction) => {
   switch (action.type) {
     case ActionType.ADD_TODO:
       const { header, body, selected, completed } = action.payload
@@ -27,4 +46,4 @@ const reducer = (state: ITodoState, action: TAction) => {
   }
 }
 
-export default reducer
+export default reducerTodos
