@@ -41,9 +41,10 @@ const InputAdornments: React.FC = () => {
 
   const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues({...values, [prop]: event.target.value});
+    console.log(event.target.value)
   };
 
-
+  console.log(values)
   return (
     <div className={classes.root}>
       <div>

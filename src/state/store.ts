@@ -5,7 +5,9 @@ import ReduxThunk from 'redux-thunk'
 
 import reducers from './reducers'
 export const store = createStore(reducers, {}, applyMiddleware(ReduxThunk))
+const state = store.getState()
 
+// state.todos.dataTodo.
 // import logger from 'redux-logger'
 // import { persistStore, persistReducer } from 'redux-persist'
 // import storage from 'redux-persist/lib/storage'

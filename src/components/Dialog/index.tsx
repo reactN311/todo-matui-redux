@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Button from '@material-ui/core/Button';
 import Dialog  from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -64,7 +65,7 @@ const AlertDialogSlide:React.FC<DialogTodoProps> =({setData}: DialogTodoProps):J
 
   const handleSave = () => {
     setData({
-      id: 0 ,
+      id: '1000' ,
       header: 'Brunch this weekend?',
       author: 'Mark',
       body: 'I\'ll be in your neighborhood doing errands this…',
@@ -89,7 +90,7 @@ const AlertDialogSlide:React.FC<DialogTodoProps> =({setData}: DialogTodoProps):J
         <DialogTitle id="alert-dialog-slide-title">{"Add new todo?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-todo">
-            <InputAdornments />
+            <InputAdornments  />
           </DialogContentText>
         </DialogContent>
         <DialogActions>

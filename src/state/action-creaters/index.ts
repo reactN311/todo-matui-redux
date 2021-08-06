@@ -1,17 +1,48 @@
-import { ActionType, ITodo } from '../action-type'
+import { Dispatch } from 'redux'
+import {
+  addTodoCreate,
+  completedTodoCreate,
+  delTodoCreate,
+  editTodoCreate,
+} from '../actions'
 
-export const addTodoCreate = (todo: ITodo) => {
-  return { type: ActionType.ADD_TODO, payload: todo }
+import {ActionType,  ITodo} from '../action-type'
+
+export interface IAddTodoCreateAction {
+  type: ActionType
+  payload: ITodo
+}
+export interface IEditTodoCreate {
+  type: ActionType
+  payload: ITodo
 }
 
-export const editTodoCreate = (todo: ITodo) => {
-  return { type: ActionType.EDIT_TODO, payload: todo }
+export interface IDelTodoCreate {
+  type: ActionType
+  payload: string
 }
 
-export const delTodoCreate = (id: number) => {
-  return { type: ActionType.DELETE_TODO, payload: id }
+export interface ICompletedTodoCreate {
+  type: ActionType
+  payload: string
 }
 
-export const completedTodoCreate = (id: number) => {
-  return { type: ActionType.COMPLETED_TODO, payload: id }
+export const addTodo = (todo: ITodo) => ( dispatch: Dispatch<IAddTodoCreateAction> ) => {
+  dispatch(addTodoCreate(todo))
+}
+
+export const addTodoWith = (todo: ITodo) => ( dispatch: Dispatch<IAddTodoCreateAction> ) => {
+  return  dispatch(addTodoCreate(todo))
+}
+
+export const editTodo = (todo: ITodo) => (dispatch: Dispatch<IEditTodoCreate>) => {
+  return  dispatch(editTodoCreate(todo))
+}
+
+export const delTodo = (id: string) => (dispatch: Dispatch<IDelTodoCreate>) => {
+  return  dispatch(delTodoCreate(id))
+}
+
+export const completedTodo = (id: string) => ( dispatch: Dispatch<ICompletedTodoCreate> ) => {
+  return  dispatch(completedTodoCreate(id))
 }

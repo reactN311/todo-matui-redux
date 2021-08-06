@@ -1,5 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+// import {Dispatch} from "redux";
 import {createStructuredSelector} from "reselect";
 
 
@@ -16,10 +18,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { green, pink } from '@material-ui/core/colors';
 
 import DeleteIcon from '@material-ui/icons/Delete';
-import {ICompletedTodoAction, ITodo, TAction} from "../../state/action-type";
+import {ICompletedTodoAction, ITodo, TAction, ITodoState} from "../../state/action-type";
 import { dataSelector} from '../../state/reselects';
-import {completedTodo, delTodo} from "../../state/actions";
-import {Dispatch} from "redux";
+import {completedTodo, delTodo} from "../../state/action-creaters";
+import { AnyObject } from 'immer/dist/internal';
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,52 +45,44 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface ItemsListProps {
-  todos: ITodo[]
-  completed: (id: number) => void
-  delTodo: (id: number) => void
+  todos: AnyObject
+  completed: (id: string) => void
+  delTodo: (id: string) => void
 }
 
 const ItemsList = ({todos, completed, delTodo}: ItemsListProps) => {
-  const [state, setState] = React.useState({
-    checkedA: true,
-    checkedB: true,
-    checkedF: true,
-    checkedG: true,
-  });
   const classes = useStyles();
 
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // setState({ ...state, [event.target.name]: event.target.checked });
-    completed(parseInt(event.target.name))
+    completed(event.target.name)
   };
 
   const handleDelete = (event:any ) => {
-    // setState({ ...state, [event.target.name]: event.target.checked });
-    delTodo(parseInt(event.target.closest('.bnt-del').id))
+    delTodo(event.target.closest('.bnt-del').id)
     console.log(event.target.closest('.bnt-del').id)
   };
 
 
-  return todos.length
+  return Object.keys(todos).length
     ?(
     <List className={classes.root}>
-      {todos && todos.map((t:ITodo, index:number) => (
+      {Object.keys(todos).map((t:string) => (
         <>
           <ListItem key={ uuIdv4() } alignItems="flex-start">
             <ListItemIcon>
               <Checkbox
                 edge="start"
-                checked={t.completed}
+                checked={todos[t].completed}
                 onChange={handleChange}
-                name={t.id.toString()}
+                name={todos[t].id.toString()}
                 tabIndex={-1}
                 disableRipple
                 inputProps={{ 'aria-labelledby': 'labelId' }}
               />
             </ListItemIcon>
             <ListItemText
-              primary={t.header}
+              primary={todos[t].header}
               secondary={
                 <React.Fragment>
                   <Typography
@@ -96,13 +91,13 @@ const ItemsList = ({todos, completed, delTodo}: ItemsListProps) => {
                     className={classes.inline}
                     color="textPrimary"
                   >
-                    {t.author}
+                    {todos[t].author}
                   </Typography>
-                  --{t.body}
+                  --{todos[t].body}
                 </React.Fragment>
               }
             />
-            <div className={'bnt-del'} id={t.id.toString()} onClick={handleDelete} >
+            <div className='bnt-del' id={todos[t].id} onClick={handleDelete} >
               <Avatar className={classes.pink}>
                 <DeleteIcon  style={{fontSize: 'small'}} />
               </Avatar>
@@ -114,7 +109,7 @@ const ItemsList = ({todos, completed, delTodo}: ItemsListProps) => {
     </List>
   )
     :(
-      <div>loading...</div>
+      <div style={{minWidth: 800, minHeight: 200}} >No todos...</div>
     )
 }
 
@@ -124,12 +119,12 @@ const mapStateToProps = createStructuredSelector ({
 });
 
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<ITodoState, TAction, any>) => {
   return {
-    completed: (id: number) => {
+    completed: (id: string) => {
       dispatch(completedTodo(id))
     },
-    delTodo: (id: number) => {
+    delTodo: (id: string) => {
       dispatch(delTodo(id))
     },
   }

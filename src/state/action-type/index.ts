@@ -1,13 +1,16 @@
 export interface ITodo {
-  id: number
-  header: string | null
-  author: string | null
-  body: string | null
-  selected: boolean
-  completed: boolean
+    id: string
+    header: string
+    author: string
+    body: string
+    selected: boolean
+    completed: boolean
 }
+
 export interface ITodoState {
-  dataTodo: ITodo[]
+  dataTodo: {
+    [key: string] : ITodo
+  }
 }
 
 export enum ActionType {
@@ -24,15 +27,17 @@ export interface IAddTodoAction {
 
 export interface IDeleteTodoAction {
   type: ActionType.DELETE_TODO
-  payload: number
+  payload: string
 }
+
 export interface IEditTodoAction {
   type: ActionType.EDIT_TODO
   payload: ITodo
 }
+
 export interface ICompletedTodoAction {
   type: ActionType.COMPLETED_TODO
-  payload: number // id
+  payload: string // id
 }
 
 export type TAction =
