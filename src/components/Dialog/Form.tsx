@@ -1,9 +1,11 @@
 import React from 'react';
+
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
+import { ITodo } from '../../state/action-type';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,28 +25,49 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface State {
-  amount: string;
+interface IState {
   header: string;
   body: string;
   author: string;
 }
+interface IFormProp { 
+  isOpen: boolean
+  setData: (data: ITodo) => void; }
 
-const InputAdornments: React.FC = () => {
+const randomId = () => {
+  return Math.random().toString(36).substr(2,5)
+}
+const initState = {
+  header: '',
+  body: '',
+  author: '',
+}
+
+const FormDialog: React.FC<IFormProp> = ({isOpen, setData}) => {
   const classes = useStyles();
-  const [values, setValues] = React.useState<State>({
-    amount: '',
-    header: '',
-    body: '',
-    author: '',
-  });
+  const [values, setValues] = React.useState<IState>(initState);
 
-  const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({...values, [prop]: event.target.value});
-    console.log(event.target.value)
-  };
+  React.useEffect(() => {
+    if(isOpen) return
+    setValues(initState)
+  }, [isOpen])
 
-  console.log(values)
+  React.useEffect(() => {
+
+    let newTodo: ITodo = {id: randomId(), header: values.header,
+      author: values.author, body: values.body,
+      selected: false, completed: false}
+
+    setData(newTodo)
+     
+  }, [values])
+
+   
+  const handleChange =  (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nVal = {...values, [prop]: event.target.value } 
+      setValues(nVal)
+  } 
+
   return (
     <div className={classes.root}>
       <div>
@@ -59,16 +82,6 @@ const InputAdornments: React.FC = () => {
           />
         </FormControl>
         <FormControl fullWidth className={classes.margin} variant="outlined">
-          <InputLabel htmlFor="form-input__author">Author</InputLabel>
-          <OutlinedInput
-            id="form-input__author"
-            value={values.author}
-            onChange={handleChange('author')}
-            startAdornment={<InputAdornment position="start">A</InputAdornment>}
-            labelWidth={60}
-          />
-        </FormControl>
-        <FormControl fullWidth className={classes.margin} variant="outlined">
           <InputLabel htmlFor="form-input__body">Body</InputLabel>
           <OutlinedInput
             id="form-input__body"
@@ -78,8 +91,19 @@ const InputAdornments: React.FC = () => {
             labelWidth={60}
           />
         </FormControl>
+        <FormControl fullWidth className={classes.margin} variant="outlined">
+          <InputLabel htmlFor="form-input__author">Author</InputLabel>
+          <OutlinedInput
+            id="form-input__author"
+            value={values.author}
+            onChange={handleChange('author')}
+            startAdornment={<InputAdornment position="start">A</InputAdornment>}
+            labelWidth={60}
+          />
+        </FormControl>
+        
       </div>
     </div>)
 }
 
-export default InputAdornments
+export default FormDialog

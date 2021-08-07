@@ -21,13 +21,25 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
+    // paddingLeft: theme.spacing(1),
+    display: 'flex',
+    justifyContent: 'center',
   },
   paper: {
     padding: theme.spacing(1),
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    // width: 600,
+    // overflow: 'hidden',
+  },
+  paperHeader: {
+    padding: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: 'gainsboro',
+    // width: 600,
     // overflow: 'hidden',
   },
   fixedHeight: {

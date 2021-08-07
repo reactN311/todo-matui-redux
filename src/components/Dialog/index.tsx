@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactChild, ReactChildren } from 'react';
 
 import Button from '@material-ui/core/Button';
 import Dialog  from '@material-ui/core/Dialog';
@@ -8,10 +8,13 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions';
-import InputAdornments from "./Form";
-import AddIcon from "@material-ui/icons/Add";
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
+// import AddIcon from "@material-ui/icons/Add";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {ITodo} from "../../state/action-type";
+
+import FormDialog from "./Form";
+import {ITodo} from "../../state/action-type"; 
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,21 +40,19 @@ const Transition = React.forwardRef(function Transition(
 
 
 interface DialogTodoProps {
+  data: {
+    Custombutton: React.ElementType //React.ElementType<any>,
+    title: string
+    todo?: ITodo
+  }
   setData: (todo: ITodo) => void
+  saveData: (todo: boolean) => void
 }
 
-const initState = {
-  id: 0 ,
-  header: 'Brunch this weekend?',
-  author: 'Mark',
-  body: 'I\'ll be in your neighborhood doing errands this…',
-  selected: false,
-  completed: false,
-}
 
-const AlertDialogSlide:React.FC<DialogTodoProps> =({setData}: DialogTodoProps):JSX.Element => {
+
+const DialogSlide:React.FC<DialogTodoProps> =({data:{Custombutton, title},setData, saveData}: DialogTodoProps):JSX.Element => {
   const [open, setOpen] = React.useState(false);
-  const [todo, setTodo] = React.useState(initState);
   const classes = useStyles();
 
 
@@ -62,43 +63,35 @@ const AlertDialogSlide:React.FC<DialogTodoProps> =({setData}: DialogTodoProps):J
   const handleClose = () => {
     setOpen(false);
   };
+  // const setDataForm = (data: ITodo) => {
+  //   console.log('setDataForm', data);
+  // };
 
   const handleSave = () => {
-    setData({
-      id: '1000' ,
-      header: 'Brunch this weekend?',
-      author: 'Mark',
-      body: 'I\'ll be in your neighborhood doing errands this…',
-      selected: false,
-      completed: false,
-    });
+    saveData(true);
+    setOpen(false);
   };
 
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        <AddIcon className={classes.iconPlus}  />
+        <Custombutton />
       </Button>
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
+      <Dialog open={open} TransitionComponent={Transition} keepMounted onClose={handleClose}
+        aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle id="alert-dialog-slide-title">{"Add new todo?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-slide-title">{title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-todo">
-            <InputAdornments  />
+            <FormDialog isOpen={open} setData={setData} />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            Cancel
+            <CancelPresentationIcon />
           </Button>
           <Button onClick={handleSave} color="primary">
-            Save
+            <PlaylistAddCheckIcon />
           </Button>
         </DialogActions>
       </Dialog>
@@ -106,4 +99,4 @@ const AlertDialogSlide:React.FC<DialogTodoProps> =({setData}: DialogTodoProps):J
   );
 }
 
-export default  AlertDialogSlide
+export default  DialogSlide
