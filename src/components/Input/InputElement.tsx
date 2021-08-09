@@ -1,90 +1,60 @@
-import React from 'react';
+import React from 'react'; 
 import { connect } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
+import { createStructuredSelector } from 'reselect';
 
-import {ITodo, ITodoState, TAction} from "../../state/action-type";
-import { addTodoWith } from '../../state/action-creaters';
-
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
-import AddIcon from "@material-ui/icons/Add";
+import { dataSelector } from '../../state/reselects';
+import { ITodo, ITodoState, TAction } from '../../state/action-type';
+import { completedTodo, delTodo, editTodo, showTodoForm } from '../../state/action-creaters';
+  
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 
-import DialogTodo from "../Dialog";
-
-const useStyles = makeStyles((theme: Theme) =>
-createStyles({
-    root: {
-      display: 'flex',
-      flexWrap: 'nowrap',
-      alignSelf: 'flex-end',
-
-    },
-    textField: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-      width: '25ch',
-    },
-    iconPlus: {
-      color: 'cadetblue',
-      marginTop: theme.spacing(1),
-      marginRight: theme.spacing(4),
-      width: 40,
-      fontSize: "2.5rem"
-    }
-
-  }),
-);
-
-const initState: ITodo = {
-  id: '0' ,
-  header: 'Brunch this weekend?',
-  author: 'Mark',
-  body: 'I\'ll be in your neighborhood doing errands this…',
-  selected: false,
-  completed: false,
-}
-interface InputElProps {
-  addTodo: (todo: ITodo) => void
+import useStylesInputEl from './InputElement.styles';
+// import { showDiagForm } from '../../state/actions';
+  
+interface InputElementProps {
+  showDiag?: (show: boolean) => void
 }
 
-export const InputElement: React.FC<InputElProps> = ({addTodo}:InputElProps) => {
-  // const [open, setOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState(initState);
+const InputElement: React.FC<InputElementProps> = ({showDiag}) => { 
+  const classes = useStylesInputEl();
+  // const dispatch = useDispatch()
 
-  const classes = useStyles();
-
-  const setTodo = (todo: ITodo)=>{
-    setFormData(todo)
+  const showDiagS = () => {
+    // console.log('show');
+    if(!!showDiag) {  showDiag(true)}
   }
-
-  const saveTodo = (todo: boolean)=>{
-    if(todo && formData.id !== '0'){
-      addTodo(formData)
-      setFormData(initState)
-      console.log(formData);
-      
-    }
-  }
-
-  let AddIconCustom = () => (<PlaylistAddIcon   style={{ fontSize: 40 }} />)
-  let dataDiag = {Custombutton:AddIconCustom, title:'Добавить собитые' }
 
   return (
-    <div className={classes.root}>
-      <DialogTodo data={dataDiag} saveData={saveTodo} setData={setTodo} />
+    <div className={classes.root} onClick={showDiagS} >
+      <PlaylistAddIcon   style={{ fontSize: 40 }} /> 
     </div>
   )
 }
 
 
+const mapStateToProps = createStructuredSelector ({
+  todos: dataSelector,
+});
+
+
 const mapDispatchToProps = (dispatch: ThunkDispatch<ITodoState, TAction, any>) => {
-  return { 
-    addTodo: (todo: ITodo) => {
-      dispatch(addTodoWith(todo))
+  return {
+    completed: (id: string) => {
+      dispatch(completedTodo(id))
+    },
+    delTodo: (id: string) => {
+      dispatch(delTodo(id))
+    },
+    editTodo: (todo: ITodo) => {
+      dispatch(editTodo(todo))
+    },
+    showDiag: (show: boolean) => {
+      dispatch(showTodoForm(show))
     },
   }
 }
 
-const TodoList = connect(null, mapDispatchToProps)(InputElement)
+export default  connect(mapStateToProps, mapDispatchToProps)(InputElement) 
 
-export default TodoList
+

@@ -1,11 +1,14 @@
-import { createStore, applyMiddleware
+import {
+  createStore,
+  applyMiddleware,
   // , compose
 } from 'redux'
 import ReduxThunk from 'redux-thunk'
 
 import reducers from './reducers'
 export const store = createStore(reducers, {}, applyMiddleware(ReduxThunk))
-const state = store.getState()
+export const state = store.getState()
+console.log(state)
 
 // state.todos.dataTodo.
 // import logger from 'redux-logger'

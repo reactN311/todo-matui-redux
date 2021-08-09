@@ -1,6 +1,6 @@
 // export * from './store'
 // export * as action from './action-creaters'
 
-import {store} from './store';
-export  {store};
+import { store, state } from './store'
+export { store, state }
 // export  {persistor};

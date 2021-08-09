@@ -1,6 +1,21 @@
 import produce from 'immer'
-import { ActionType, ITodo, ITodoState, TAction } from '../action-type'
+import {
+  ActionType,
+  ActionForm,
+  ITodo,
+  ITodoState,
+  TAction,
+} from '../action-type'
 // import { v4 as uuIdv4 } from 'uuid';
+
+export const emptyForm = {
+  id: '0',
+  header: 'header reducer',
+  author: 'author reducer',
+  body: 'body reducer',
+  selected: false,
+  completed: false,
+}
 
 const initState: ITodoState = {
   dataTodo: {
@@ -29,6 +44,12 @@ const initState: ITodoState = {
       completed: true,
     },
   },
+  dataForm: {
+    data: emptyForm,
+    title: '',
+    type: 'edit', // 'save' | 'edit'
+  },
+  showDialog: false,
 }
 
 export const reducerTodos = produce(
@@ -69,6 +90,21 @@ export const reducerTodos = produce(
         state.dataTodo[action.payload].completed = !state.dataTodo[
           action.payload
         ].completed
+        return state
+      case ActionForm.ADD_TODO_FORM:
+        state.dataForm.data = action.payload
+        return state
+      case ActionForm.EMPTY_TODO_FORM:
+        state.dataForm.data = emptyForm
+        return state
+      case ActionForm.SET_TYPE_TODO_FORM:
+        state.dataForm.type = action.payload
+        return state
+      case ActionForm.SET_TITLE_TODO_FORM:
+        state.dataForm.title = action.payload
+        return state
+      case ActionForm.SHOW_TODO_FORM:
+        state.showDialog = action.payload
         return state
       default:
         return state

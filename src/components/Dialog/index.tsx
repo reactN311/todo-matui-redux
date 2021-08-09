@@ -1,4 +1,9 @@
-import React, { ReactChild, ReactChildren } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+
+import {IStateForm, ITodo, ITodoState, TAction, TypeFormAction} from "../../state/action-type";
+import { addTodoWith, completedTodo, delTodo, editTodo, showTodoForm } from '../../state/action-creaters';
 
 import Button from '@material-ui/core/Button';
 import Dialog  from '@material-ui/core/Dialog';
@@ -9,26 +14,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
-import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
-// import AddIcon from "@material-ui/icons/Add";
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import CancelPresentationIcon from '@material-ui/icons/CancelPresentation'; 
 
-import FormDialog from "./Form";
-import {ITodo} from "../../state/action-type"; 
+import FormDialog from "./Form"; 
+import { createStructuredSelector } from 'reselect';
+import { dataFormSelector, showFormSelector, typeFormSelector } from '../../state/reselects'; 
 
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    iconPlus: {
-      color: 'cadetblue',
-      // marginTop: theme.spacing(1),
-      // marginRight: theme.spacing(4),
-      width: 40,
-      fontSize: "2.0rem"
-    }
-
-  }),
-);
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -37,60 +29,73 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-
+const initState: IStateForm = {
+  header: '',
+  author: '',
+  body: ''
+}
 
 interface DialogTodoProps {
   data: {
-    Custombutton: React.ElementType //React.ElementType<any>,
-    title: string
-    todo?: ITodo
-  }
-  setData: (todo: ITodo) => void
-  saveData: (todo: boolean) => void
+    title: string,
+    isShow: boolean, 
+  },
+  dataForm?: IStateForm,
+  datatypeForm?: TypeFormAction,
+  showForm: boolean,
+  showDiag: (show: boolean) => void
+  addTodo: (todo: ITodo) => void 
 }
 
 
+const DialogNewAndEdit:React.FC<DialogTodoProps> =({data:{ title}, dataForm, showForm, showDiag,addTodo}: DialogTodoProps):JSX.Element => {
+  const [open, setOpen] = React.useState(showForm); 
+  const [formData, setFormData] = React.useState<IStateForm>(() => {
+    return dataForm  ? dataForm : initState; 
+  });
 
-const DialogSlide:React.FC<DialogTodoProps> =({data:{Custombutton, title},setData, saveData}: DialogTodoProps):JSX.Element => {
-  const [open, setOpen] = React.useState(false);
-  const classes = useStyles();
+//  console.log('formData', formData);
+ React.useEffect(() => {
+   if(typeof showForm === 'undefined') return
+   setOpen(showForm)
+ },[showForm])
 
+ React.useEffect(() => { 
+   if(!open) setFormData(initState)
+ },[open])
+ 
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
+  // for stop re-render child' component
+  const setTodo = (todo: IStateForm)=>{
+    setFormData(todo)
+  }
+ 
   const handleClose = () => {
-    setOpen(false);
-  };
-  // const setDataForm = (data: ITodo) => {
-  //   console.log('setDataForm', data);
-  // };
+    showDiag(false);
+  }; 
 
-  const handleSave = () => {
-    saveData(true);
-    setOpen(false);
-  };
+  const handleSave = () => { 
+    addTodo({...formData, id: Date.now().toString(), selected: false, completed: false})
+    showDiag(false);
+
+  }; 
 
   return (
-    <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        <Custombutton />
-      </Button>
+    <div> 
       <Dialog open={open} TransitionComponent={Transition} keepMounted onClose={handleClose}
-        aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description"
+        aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-todo"
       >
         <DialogTitle id="alert-dialog-slide-title">{title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-todo">
-            <FormDialog isOpen={open} setData={setData} />
+            <FormDialog isOpen={open} setData={setTodo} dataTodo={formData} />
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions >
           <Button onClick={handleClose} color="primary">
             <CancelPresentationIcon />
           </Button>
-          <Button onClick={handleSave} color="primary">
+          <Button onClick={handleSave} color="primary" disabled={formData.header.trim().length < 3 } >  
             <PlaylistAddCheckIcon />
           </Button>
         </DialogActions>
@@ -99,4 +104,33 @@ const DialogSlide:React.FC<DialogTodoProps> =({data:{Custombutton, title},setDat
   );
 }
 
-export default  DialogSlide
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<ITodoState, TAction, any>) => {
+  return { 
+    addTodo: (todo: ITodo) => {
+      dispatch(addTodoWith(todo))
+    },
+    completed: (id: string) => {
+      dispatch(completedTodo(id))
+    },
+    delTodo: (id: string) => {
+      dispatch(delTodo(id))
+    },
+    editTodo: (todo: ITodo) => {
+      dispatch(editTodo(todo))
+    },
+    showDiag: (show: boolean) => {
+      dispatch(showTodoForm(show))
+    },
+  }
+}
+ 
+const mapStateToProps = createStructuredSelector ({
+  dataForm: dataFormSelector,
+  datatypeForm: typeFormSelector,
+  showForm: showFormSelector,
+});
+
+const DialogComponent = connect(mapStateToProps, mapDispatchToProps)(DialogNewAndEdit)
+export default  DialogComponent
+ 

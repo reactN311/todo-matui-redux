@@ -1,71 +1,53 @@
 import React from 'react';
-
-import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+ 
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
-import { ITodo } from '../../state/action-type';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    withoutLabel: {
-      marginTop: theme.spacing(3),
-    },
-    textField: {
-      width: '25ch',
-    },
-  }),
-);
-
-interface IState {
-  header: string;
-  body: string;
-  author: string;
+import { IStateForm, ITodo } from '../../state/action-type';  
+import useStylesForm from './Form.styles';
+import { randomId } from './services';
+  
+const initState: IStateForm = {
+  header: '',
+  author: '',
+  body: '',
 }
+
+
+const transData = (todo: ITodo): IStateForm => { 
+  let d = {
+    header: todo.header,
+    author: todo.author,
+    body: todo.body,
+  }
+  return d }  
+
 interface IFormProp { 
   isOpen: boolean
-  setData: (data: ITodo) => void; }
+  dataTodo?: IStateForm
+  setData: (data: IStateForm) => void; }
 
-const randomId = () => {
-  return Math.random().toString(36).substr(2,5)
-}
-const initState = {
-  header: '',
-  body: '',
-  author: '',
-}
-
-const FormDialog: React.FC<IFormProp> = ({isOpen, setData}) => {
-  const classes = useStyles();
-  const [values, setValues] = React.useState<IState>(initState);
+  
+const FormDialog: React.FC<IFormProp> = React.memo(({dataTodo, isOpen, setData}) => {
+  const [values, setValues] = React.useState<IStateForm>(() => {
+    return dataTodo  ?  dataTodo : initState; 
+  });
 
   React.useEffect(() => {
-    if(isOpen) return
-    setValues(initState)
-  }, [isOpen])
+    !isOpen  && setValues(initState)
+  },[isOpen])
 
-  React.useEffect(() => {
-
-    let newTodo: ITodo = {id: randomId(), header: values.header,
-      author: values.author, body: values.body,
-      selected: false, completed: false}
-
-    setData(newTodo)
-     
-  }, [values])
-
-   
-  const handleChange =  (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const nVal = {...values, [prop]: event.target.value } 
-      setValues(nVal)
+  const classes = useStylesForm();
+  if(dataTodo){
+    // console.log(dataTodo)
+  }
+ 
+  const handleChange =  (prop: keyof ITodo) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nVal = {...values, [prop]: event.target.value }  
+     setValues(nVal) 
+     setData(nVal)
   } 
 
   return (
@@ -76,11 +58,13 @@ const FormDialog: React.FC<IFormProp> = ({isOpen, setData}) => {
           <OutlinedInput
             id="form-input__header"
             value={values.header}
+            // defaultValue={values.header}
             onChange={handleChange('header')}
             startAdornment={<InputAdornment position="start">H</InputAdornment>}
             labelWidth={60}
           />
         </FormControl>
+
         <FormControl fullWidth className={classes.margin} variant="outlined">
           <InputLabel htmlFor="form-input__body">Body</InputLabel>
           <OutlinedInput
@@ -91,6 +75,7 @@ const FormDialog: React.FC<IFormProp> = ({isOpen, setData}) => {
             labelWidth={60}
           />
         </FormControl>
+
         <FormControl fullWidth className={classes.margin} variant="outlined">
           <InputLabel htmlFor="form-input__author">Author</InputLabel>
           <OutlinedInput
@@ -104,6 +89,8 @@ const FormDialog: React.FC<IFormProp> = ({isOpen, setData}) => {
         
       </div>
     </div>)
-}
+})
 
 export default FormDialog
+
+ 

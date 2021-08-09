@@ -20,9 +20,9 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import { ITodo, TAction, ITodoState} from "../../state/action-type";
 import { dataSelector} from '../../state/reselects';
-import {completedTodo, delTodo, editTodo} from "../../state/action-creaters";
+import {completedTodo, delTodo, editTodo, showTodoForm} from "../../state/action-creaters";
 
-import DialogTodo from "../Dialog";
+// import EditDialogTodo from "../Dialog";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -49,46 +49,64 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+// const initState: ITodo = {
+//   id: '0' ,
+//   header: 'Brunch this weekend?',
+//   author: 'Mark',
+//   body: 'I\'ll be in your neighborhood doing errands this…',
+//   selected: false,
+//   completed: false,
+// }
+
 interface ItemsListProps {
   todos: { [key: string]: ITodo },
   completed: (id: string) => void,
   delTodo: (id: string) => void,
   editTodo: (todo: ITodo) => void,
+  showDiag?: (show: boolean) => void
 }
 
-const ItemsList: React.FC<ItemsListProps> = ({todos, completed, delTodo, editTodo}: ItemsListProps) => {
+const ItemsList: React.FC<ItemsListProps> = ({todos, completed, delTodo, editTodo, showDiag}: ItemsListProps) => {
+  // const [formData, setFormData] = React.useState(initState);
   const classes = useStyles();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     completed(event.target.name)
   };
 
-  const handleDelete = (event:any ) => {
-    delTodo(event.target.closest('.bnt-del').id)
+  const handleDelete = (event: any ) => {
+    let t = event.target.closest('.bnt-del');
+    delTodo(t.id)
   };
 
+  const showDiagS = () => {
+    console.log('show');
+    if(!!showDiag) {console.log('show'); showDiag(true)}
+  }
+    
   // const handleEdit = (event:any ) => {
   //   // delTodo(event.target.closest('.bnt-edit').id)
   //   console.log(event.target.closest('.bnt-edit'))
   // };
 
-  const setTodo = (todo: ITodo)=>{
-    // empty implementation 
-  }
+  // const setTodo = React.useCallback((todo: ITodo)=>{
+  //   // empty implementation 
+  //   console.log('List',todo)
+  // },[])
 
-  const saveTodo = (todo: boolean)=>{
-    // empty implementation 
-  }
+  // const saveTodoToStore = React.useCallback((todo: boolean)=>{
+  //   // empty implementation 
+  // },[])
 
-  let EditIconCustom = () => (<EditIcon  style={{fontSize: 'small' }} />)
-  let dataDiag = {Custombutton: EditIconCustom, title:'Редактировать собитые' }
+  // let EditIconCustom = () => (<EditIcon  style={{fontSize: 'small' }} />)
+  // let dataDiag = {Custombutton: EditIconCustom, title:'Редактировать собитые' }
 
   return Object.keys(todos).length
     ?(
     <List className={classes.root}>
       {Object.keys(todos).map((t:string) => (
-        <>
-          <ListItem key={ uuIdv4() } alignItems="center">
+        <React.Fragment key={t}>
+          <ListItem component={'li'} key={ uuIdv4() } alignItems="center" selected={todos[t].selected} >
             <ListItemIcon>
               <Checkbox edge="start" checked={todos[t].completed}
                 onChange={handleChange} name={todos[t].id.toString()}
@@ -96,12 +114,13 @@ const ItemsList: React.FC<ItemsListProps> = ({todos, completed, delTodo, editTod
                 inputProps={{ 'aria-labelledby': 'labelId' }}
               />
             </ListItemIcon>
-            <ListItemText
+            <ListItemText 
+              style={{borderBottom: todos[t].completed ? '1px solid #4CAF52': '1px solid grey'}}
               primary={todos[t].header}
               secondary={
                 <React.Fragment>
-                  <Typography component="span" variant="body2"
-                    className={classes.inline} color="textPrimary"
+                  <Typography component="span" variant="inherit"
+                    className={classes.inline} color={todos[t].completed ? "error" : "textPrimary"}
                   >
                     {todos[t].author}
                   </Typography>
@@ -109,9 +128,9 @@ const ItemsList: React.FC<ItemsListProps> = ({todos, completed, delTodo, editTod
                 </React.Fragment>
               }
             />
-            <div className='bnt-edit' id={todos[t].id} style={{ margin: 5}} >
-              <Avatar className={classes.green}>
-                <DialogTodo  data={{...dataDiag, todo:todos[t]}} saveData={saveTodo} setData={setTodo} />
+            <div  onClick={showDiagS}  className='bnt-edit' id={todos[t].id} style={{ margin: 5}} >
+              <Avatar className={classes.green}> 
+                <EditIcon  style={{fontSize: '1rem' }} />
               </Avatar>
             </div> 
             <div className='bnt-del' id={todos[t].id} onClick={handleDelete} style={{ margin: 5, cursor: 'pointer'}} >
@@ -121,7 +140,7 @@ const ItemsList: React.FC<ItemsListProps> = ({todos, completed, delTodo, editTod
             </div>
           </ListItem>
           <Divider variant="inset" component="li" />
-        </>
+        </React.Fragment>
       ))}
     </List>
   )
@@ -145,6 +164,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<ITodoState, TAction, any>) =
     },
     editTodo: (todo: ITodo) => {
       dispatch(editTodo(todo))
+    },
+    showDiag: (show: boolean) => {
+      dispatch(showTodoForm(show))
     },
   }
 }
